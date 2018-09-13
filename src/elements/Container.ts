@@ -1,12 +1,9 @@
 import * as PIXI from 'pixi.js';
 import BaseElement from './BaseElement';
 
-export default class Container extends BaseElement {
+export default class Container<T> extends BaseElement<T> {
 
-  constructor () {
-    super();
-    this.children = [];
-  }
+  children = [];
 
   addChild (child) {
     this.layoutNode.insertChild(child.layoutNode, this.layoutNode.getChildCount());
@@ -35,7 +32,7 @@ export default class Container extends BaseElement {
   }
 
   removeChildAt (child, index) {
-    this.displayObject.removeChildAt(child.displayObject, index);
+    this.displayObject.removeChildAt(index);
     this.layoutNode.removeChild(child.layoutNode);
     this.children.splice(index, 1);
     child.destroy();
@@ -44,7 +41,7 @@ export default class Container extends BaseElement {
   setChildIndex(child, index) {
     this.displayObject.setChildIndex(child.displayObject, index);
     const currentIndex = this.getChildIndex(child);
-    this.childen.splice(currentIndex, 1);
+    this.children.splice(currentIndex, 1);
     this.children.splice(index, 0, child);
   }
 
@@ -73,5 +70,4 @@ export default class Container extends BaseElement {
   createDisplayObject () {
     return new PIXI.Container();
   }
-
 };

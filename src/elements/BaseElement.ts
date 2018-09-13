@@ -1,7 +1,8 @@
 import * as PIXI from 'pixi.js';
-import Yoga from 'yoga-layout';
+import * as React from 'react';
+import * as Yoga from 'yoga-layout';
 import invariant from 'fbjs/lib/invariant';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import applyLayoutProperties from '../applyLayoutProperties';
 
 const interactiveProps = {
@@ -21,7 +22,8 @@ const interactivePropCount = interactivePropList.length;
 const childNotSupported = () => invariant(false, 'Element does not support children.');
 const noStyle = {};
 
-export default class BaseElement {
+// @ts-ignore
+export default class BaseElement<T> implements React.ComponentClass<T> {
 
   _layoutDirty = true;
   displayObject = this.createDisplayObject();
@@ -35,6 +37,22 @@ export default class BaseElement {
   scaleX = 1;
   scaleY = 1;
   root = null;
+
+  // render(): React.ReactNode {
+  //   return void 0;
+  // }
+  //
+  // setState() {}
+  //
+  // forceUpdate() {}
+  //
+  // props;
+  //
+  // state;
+  //
+  // context;
+  //
+  // refs;
 
   hasChild (child) {
     childNotSupported();
@@ -77,15 +95,19 @@ export default class BaseElement {
 
       if (oldValue !== newValue) {
         if (oldValue) {
+          // @ts-ignore
           this.displayObject.removeListener(key, oldValue);
         }
         if (newValue) {
+          // @ts-ignore
           this.displayObject.on(key, newValue);
         }
       }
     }
 
+    // @ts-ignore
     this.displayObject.interactive = isInteractive;
+    // @ts-ignore
     this.displayObject.hitArea = isInteractive ? this.hitArea : null;
   }
 
@@ -102,8 +124,10 @@ export default class BaseElement {
     let layoutDirty = applyLayoutProperties(this.layoutNode, this.style, newStyle);
 
     this.style = newStyle;
+    // @ts-ignore
     this.displayObject.alpha = this.parsePercentage(this.style.alpha, 1);
 
+    // @ts-ignore
     const { props, list, count } = this.constructor.defaultProps;
 
     for (let i = 0; i < count; i++) {
@@ -116,9 +140,13 @@ export default class BaseElement {
       }
     }
 
+    // @ts-ignore
     let anchorX = this.parsePercentage(this.style.anchorX, 0.5);
+    // @ts-ignore
     let anchorY = this.parsePercentage(this.style.anchorY, 0.5);
+    // @ts-ignore
     let scaleX = this.parsePercentage(this.style.scaleX, 1);
+    // @ts-ignore
     let scaleY = this.parsePercentage(this.style.scaleY, 1);
 
     const anchorsDirty = anchorX !== this.anchorX || anchorY !== this.anchorY || scaleX !== this.scaleX || scaleY !== this.scaleY;
@@ -126,7 +154,9 @@ export default class BaseElement {
     if (anchorsDirty) {
       this.anchorX = anchorX;
       this.anchorY = anchorY;
+      // @ts-ignore
       this.displayObject.scale.x = this.scaleX = scaleX;
+      // @ts-ignore
       this.displayObject.scale.y = this.scaleY = scaleY;
     }
 
@@ -143,7 +173,9 @@ export default class BaseElement {
       newLayout.width !== cached.width || newLayout.height !== cached.height;
 
     if (layoutDirty) {
+      // @ts-ignore
       cached.x = newLayout.left;
+      // @ts-ignore
       cached.y = newLayout.top;
       cached.width = newLayout.width;
       cached.height = newLayout.height;
@@ -154,12 +186,16 @@ export default class BaseElement {
       const offsetX = this.anchorX * cached.width;
       const offsetY = this.anchorY * cached.height;
 
+      // @ts-ignore
       this.displayObject.position.x = cached.x + offsetX;
+      // @ts-ignore
       this.displayObject.position.y = cached.y + offsetY;
 
+      // @ts-ignore
       this.onLayout(cached.x, cached.y, cached.width, cached.height);
 
       if (this.onLayoutCallback) {
+        // @ts-ignore
         this.onLayoutCallback(cached.x, cached.y, cached.width, cached.height);
       }
 
@@ -183,14 +219,17 @@ export default class BaseElement {
   }
 
   destroy () {
+    // @ts-ignore
     this.displayObject.destroy();
     this.displayObject = null;
     this.layoutNode.free();
     this.layoutNode = null;
   }
 
-  createDisplayObject () {
+  createDisplayObject (): PIXI.Container {
     invariant(false, 'Cannot instantiate base class');
+
+    return void 0;
   }
 
   get layoutDirty () {
@@ -210,16 +249,20 @@ export default class BaseElement {
   }
 
   static get defaultProps () {
+    // @ts-ignore
     if (!this._defaultProps) {
 
       const props = this.listDefaultProps();
       const list = Object.keys(props);
       const count = list.length;
 
+      // @ts-ignore
       this._defaultProps = { props, list, count };
+      // @ts-ignore
       this._defaultProps.count = this._defaultProps.list.length;
     }
 
+    // @ts-ignore
     return this._defaultProps;
   }
 

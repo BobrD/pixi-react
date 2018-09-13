@@ -1,13 +1,14 @@
 import * as PIXI from 'pixi.js';
-import Yoga from 'yoga-layout';
+import * as Yoga from 'yoga-layout';
 import BaseElement from './BaseElement';
 
-export default class Sprite extends BaseElement {
+export default class Sprite<T> extends BaseElement<T> {
 
   sizeData = { width: 0, height: 0 };
 
   constructor () {
     super();
+    // @ts-ignore
     this.layoutNode.setMeasureFunc((width, widthMode, height, heightMode) => this.measure(width, widthMode, height, heightMode));
   }
 
@@ -26,21 +27,28 @@ export default class Sprite extends BaseElement {
 
   updateTexture (texture) {
     if (texture && !texture.baseTexture.hasLoaded) {
+      // @ts-ignore
       texture.once('update', () => this.updateTexture(this.displayObject.texture));
     }
 
+    // @ts-ignore
     this.displayObject.texture = texture;
+    // @ts-ignore
     this.displayObject.pivot.x = texture ? texture.orig.width * this.anchorX : 0;
+    // @ts-ignore
     this.displayObject.pivot.y = texture ? texture.orig.height * this.anchorY : 0;
 
     // Due to custom measure function, we have to manually flag
     // dirty when we update the texture
+    // @ts-ignore
     this.layoutNode.markDirty();
 
+    // @ts-ignore
     this.layoutDirty = true;
   }
 
   measure (width, widthMode, height, heightMode) {
+    // @ts-ignore
     const texture = this.displayObject.texture;
 
     if (!texture || !texture.baseTexture.hasLoaded) {
@@ -70,13 +78,20 @@ export default class Sprite extends BaseElement {
   }
 
   onLayout (x, y, width, height) {
+    // @ts-ignore
     if (this.displayObject.texture) {
+      // @ts-ignore
       this.displayObject.width = width * this.scaleX;
+      // @ts-ignore
       this.displayObject.height = height * this.scaleY;
+      // @ts-ignore
       if (this.displayObject.scale.x < 0 !== this.scaleX < 0) {
+        // @ts-ignore
         this.displayObject.scale.x *= -1;
       }
+      // @ts-ignore
       if (this.displayObject.scale.y < 0 !== this.scaleY < 0) {
+        // @ts-ignore
         this.displayObject.scale.y *= -1;
       }
     }

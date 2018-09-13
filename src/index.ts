@@ -1,6 +1,6 @@
-import Animated from 'animated';
+import * as Animated from 'animated';
 import Easing from 'animated/lib/Easing';
-import ReactFiberReconciler from 'react-reconciler';
+import * as ReactFiberReconciler from 'react-reconciler';
 import invariant from 'fbjs/lib/invariant';
 import ContainerElement from './elements/Container';
 import SpriteElement from './elements/Sprite';
@@ -12,6 +12,7 @@ import TextElement from './elements/Text';
 import Stage from './Stage';
 
 const UPDATE_SIGNAL = {};
+// @ts-ignore
 const performance = window.performance || window.msPerformance || window.webkitPerformance;
 const _registeredElements = {};
 
@@ -137,13 +138,13 @@ export function registerElement (name, element) {
   return name;
 }
 
-export const Container = 'Container';
-export const Text = 'Text';
-export const Sprite = 'Sprite';
-export const TilingSprite = 'TilingSprite';
-export const NineSliceSprite = 'NineSliceSprite';
-export const Graphics = 'Graphics';
-export const Rectangle = 'Rectangle';
+export const Container: any = 'Container';
+export const Text: any = 'Text';
+export const Sprite: any = 'Sprite';
+export const TilingSprite: any = 'TilingSprite';
+export const NineSliceSprite: any = 'NineSliceSprite';
+export const Graphics: any = 'Graphics';
+export const Rectangle: any = 'Rectangle';
 
 registerElement(Container, ContainerElement);
 registerElement(Text, TextElement);

@@ -1,6 +1,7 @@
+// @ts-ignore
 import * as PIXI from 'pixi.js';
 import Container from './Container';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 const optionKeys = [    
   'antialias',
@@ -23,13 +24,16 @@ const optionKeys = [
   'width'
 ];
 
-export default class Application extends Container {
+export default class Application<T> extends Container<T> {
 
   constructor (props) {
     super();
     const options = _.pick(props, optionKeys);
+    // @ts-ignore
     this._application = new PIXI.Application(options);
+    // @ts-ignore
     this._application.ticker.add(this.onTick, this);
+    // @ts-ignore
     this.displayObject = this._application.stage;
     this.applyProps(props, props);
   }
@@ -44,6 +48,7 @@ export default class Application extends Container {
     const { style, ...nextProps } = newProps;
 
     if (oldProps.width !== width || oldProps.height !== height) {
+      // @ts-ignore
       this._application.renderer.resize(width, height);
       this.layoutDirty = true;
     }

@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { ReactPixiLayout } from './index';
 import Application from './elements/Application';
 
@@ -27,9 +27,12 @@ export default class Stage extends React.Component {
   };
 
   componentDidMount() {
+    // @ts-ignore
     const props = { view: this._canvas, ...this.props };
 
+    // @ts-ignore
     this._applicationElement = new Application(props);
+    // @ts-ignore
     this._applicationContainer = ReactPixiLayout.createContainer(this._applicationElement);
 
     ReactPixiLayout.injectIntoDevTools({
@@ -39,22 +42,30 @@ export default class Stage extends React.Component {
       rendererPackageName: 'react-pixi-layout'
     });
 
+    // @ts-ignore
     ReactPixiLayout.updateContainer(this.props.children, this._applicationContainer, this);
   }
 
   componentDidUpdate (prevProps, prevState) {
+    // @ts-ignore
     this._applicationElement.applyProps(prevProps, this.props);
+    // @ts-ignore
     ReactPixiLayout.updateContainer(this.props.children, this._applicationContainer, this);
   }
 
   componentWillUnmount () {
+    // @ts-ignore
     ReactPixiLayout.updateContainer(null, this._applicationContainer, this);
+    // @ts-ignore
     this._applicationElement.destroy();
+    // @ts-ignore
     this._applicationElement = null;
+    // @ts-ignore
     this._applicationContainer = null;
   }
 
   render () {
+    // @ts-ignore
     return <canvas ref={ ref => this._canvas = ref } />;
   }
 

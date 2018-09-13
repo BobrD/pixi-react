@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { Stage, Container, Rectangle, Text, Animated } from 'react-pixi-layout';
+import * as React from 'react';
+import {render} from 'react-dom';
+import { Animated, Container, Rectangle, Stage, Text } from './index';
 
-class App extends Component {
+class App extends React.Component {
 
   state = {
     toggled: false,
@@ -30,9 +30,11 @@ class App extends Component {
       .timing(this.animatedValue, { toValue, duration: 500, easing: Animated.Easing.linear })
       .start();
 
+    // @ts-ignore
     this.setState({ toggled });
   };
 
+  // @ts-ignore
   onResize = () => this.setState({ width: window.innerWidth, height: window.innerHeight });
 
   componentDidMount () {
@@ -42,29 +44,26 @@ class App extends Component {
   render () {
 
     return (
+      // @ts-ignore
       <Stage width={ this.state.width } height={ this.state.height } style={ styles.stage }>
 
-        <Rectangle style={ styles.header }>
-          <Text text="An Absolutely Positioned Header" style={{ fill: 'blue', fontSize: 32 }} />
-        </Rectangle>
+        <Text text="An Absolutely Positioned Header" style={{ fill: 'blue', fontSize: 32 }} />
 
-        <Container style={ styles.container }>
+        {/*<Container style={ styles.container }>*/}
 
-          <Animated.Rectangle
-            style={{ color: this.color, width: this.width, height: '50%', alignItems: 'center', justifyContent: 'center' }}
-            onClick={ this.onClick }
-          >
-            <Text text="Click Me" style={{ fill: 'white', fontSize: 30 }} />
-            <Animated.Sprite texture="https://i.imgur.com/6xwgjO2.png" style={{ height: '50%', alpha: this.animatedValue }} />
-          </Animated.Rectangle>
-
-          <Rectangle style={ styles.flexRight } />
-        </Container>
+          {/*<Animated.Rectangle*/}
+            {/*style={{ color: this.color, width: this.width, height: '50%', alignItems: 'center', justifyContent: 'center' }}*/}
+            {/*onClick={ this.onClick }*/}
+          {/*>*/}
+            {/*<Text text="Click Me" style={{ fill: 'white', fontSize: 30 }} />*/}
+            {/*<Animated.Sprite texture="https://i.imgur.com/6xwgjO2.png" style={{ height: '50%', alpha: this.animatedValue }} />*/}
+          {/*</Animated.Rectangle>*/}
+          {/*<Rectangle style={ styles.flexRight } />*/}
+        {/*</Container>*/}
       </Stage>
     );
   }
-
-};
+}
 
 const styles = {
 
@@ -98,4 +97,8 @@ const styles = {
 
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const mountNode = document.createElement('div');
+
+document.body.appendChild(mountNode);
+
+render(<App />, mountNode);

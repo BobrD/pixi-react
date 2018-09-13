@@ -1,12 +1,11 @@
 {
   "presets": [
-    ["env", {
-      "modules": false
-    }],
-    "stage-0",
-    "react"
-  ],
-  "plugins": [
-    "external-helpers"
+    [
+      "@babel/env",
+      {
+        "modules": false
+      }
+    ],
+    "@babel/react"
   ]
 }
