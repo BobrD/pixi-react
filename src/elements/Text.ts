@@ -1,16 +1,16 @@
 import * as PIXI from 'pixi.js';
-import BaseElement from './BaseElement';
+import Container from "./Container";
 
-export default class Text extends BaseElement {
+export default class Text extends Container<PIXI.Text> {
+
+  sizeData = { width: 0, height: 0 };
+
+  textStyle = new PIXI.TextStyle({});
 
   constructor () {
     super();
-    // @ts-ignore
-    this.layoutNode.setMeasureFunc((width, widthMode, height, heightMode) => this.measure(width, widthMode, height, heightMode));
-    // @ts-ignore
-    this.sizeData = { width: 0, height: 0 };
-    // @ts-ignore
-    this.textStyle = new PIXI.TextStyle();
+
+    this.layoutNode.setMeasureFunc(this.measure as any);
   }
 
   createDisplayObject () {
@@ -19,24 +19,20 @@ export default class Text extends BaseElement {
 
   applyProps (oldProps, newProps) {
     super.applyProps(oldProps, newProps);
-    // @ts-ignore
+    
     this.displayObject.text = newProps.text || '';
 
-    // @ts-ignore
     this.textStyle.reset();
 
-    // @ts-ignore
     for (var key in this.style) {
-      // @ts-ignore
       this.textStyle[key] = this.style[key];
     }
 
-    // @ts-ignore
     this.displayObject.style = this.textStyle;
   }
 
-  measure (width, widthMode, height, heightMode) {
-    // @ts-ignore
+  private measure = (width, widthMode, height, heightMode) => {
+    
     const { text, style } = this.displayObject;
 
     const previousWordWrapWidth = style.wordWrapWidth;
@@ -46,9 +42,9 @@ export default class Text extends BaseElement {
 
     let calculatedWidth = metrics.width;
     let calculatedHeight = metrics.height;
+
     const scale = calculatedWidth / calculatedHeight;
 
-    /* eslint-disable */
     if (width !== width && height === height) {
       calculatedWidth = height * scale;
       calculatedHeight = height;
@@ -56,24 +52,20 @@ export default class Text extends BaseElement {
       calculatedWidth = width;
       calculatedHeight = width / scale;
     }
-    /* eslint-enable */
 
-    // @ts-ignore
     this.sizeData.width = calculatedWidth;
-    // @ts-ignore
     this.sizeData.height = calculatedHeight;
 
-    // @ts-ignore
+    
     return this.sizeData;
   }
 
   onLayout (x, y, width, height) {
     this.displayObject.pivot.x = this.anchorX * width;
     this.displayObject.pivot.y = this.anchorY * height;
-    // @ts-ignore
+    
     this.displayObject.style.wordWrapWidth = width;
-    // @ts-ignore
+    
     this.displayObject.dirty = true;
   }
-
-};
+}

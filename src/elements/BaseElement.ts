@@ -18,52 +18,49 @@ const interactiveProps = {
 const interactivePropList = Object.keys(interactiveProps);
 const interactivePropCount = interactivePropList.length;
 
-const childNotSupported = () => invariant(false, 'Element does not support children.');
 const noStyle = {};
 
-// @ts-ignore
-export default class BaseElement {
+export default abstract class BaseElement<T extends PIXI.DisplayObject = PIXI.DisplayObject> {
 
   _layoutDirty = true;
+
+  children = [];
+
   displayObject = this.createDisplayObject();
+
   layoutNode = Yoga.Node.create();
+
   onLayoutCallback = null;
+
   hitArea = new PIXI.Rectangle();
-  cachedLayout = { left: 0, top: 0, width: 0, height: 0 };
-  style = {};
+
+  cachedLayout = { left: 0, top: 0, width: 0, height: 0, x: 0, y: 0 };
+
+  style: any = {};
+
   anchorX = 0.5;
+
   anchorY = 0.5;
+
   scaleX = 1;
+
   scaleY = 1;
-  root = null;
 
-  hasChild (child) {
-    childNotSupported();
-  }
+  root;
 
-  addChild (child) {
-    childNotSupported();
-  }
+  abstract hasChild (child);
 
-  addChildAt (child, index) {
-    childNotSupported();
-  }
+  abstract addChild (child);
 
-  removeChild (child) {
-    childNotSupported();
-  }
+  abstract addChildAt (child, index);
 
-  removeChildAt (child, index) {
-    childNotSupported();
-  }
+  abstract removeChild (child);
 
-  setChildIndex(child, index) {
-    childNotSupported();
-  }
+  abstract removeChildAt (child, index);
 
-  getChildIndex (child) {
-    childNotSupported();
-  }
+  abstract setChildIndex(child, index);
+
+  abstract getChildIndex (child);
 
   applyInteractiveListeners (oldProps, newProps) {
     let isInteractive = false;
@@ -78,24 +75,23 @@ export default class BaseElement {
 
       if (oldValue !== newValue) {
         if (oldValue) {
-          // @ts-ignore
           this.displayObject.removeListener(key, oldValue);
         }
         if (newValue) {
-          // @ts-ignore
           this.displayObject.on(key, newValue);
         }
       }
     }
 
-    // @ts-ignore
+    
     this.displayObject.interactive = isInteractive;
-    // @ts-ignore
+    
     this.displayObject.hitArea = isInteractive ? this.hitArea : null;
   }
 
   applyProps (oldProps, newProps) {
     this.applyInteractiveListeners(oldProps, newProps);
+
     this.onLayoutCallback = newProps.onLayout || null;
 
     let newStyle = newProps.style || noStyle;
@@ -107,10 +103,9 @@ export default class BaseElement {
     let layoutDirty = applyLayoutProperties(this.layoutNode, this.style, newStyle);
 
     this.style = newStyle;
-    // @ts-ignore
-    this.displayObject.alpha = this.parsePercentage(this.style.alpha, 1);
+    
+    this.displayObject.alpha = this.parsePercentage(1, this.style.alpha);
 
-    // @ts-ignore
     const { props, list, count } = this.constructor.defaultProps;
 
     for (let i = 0; i < count; i++) {
@@ -123,23 +118,22 @@ export default class BaseElement {
       }
     }
 
-    // @ts-ignore
-    let anchorX = this.parsePercentage(this.style.anchorX, 0.5);
-    // @ts-ignore
-    let anchorY = this.parsePercentage(this.style.anchorY, 0.5);
-    // @ts-ignore
-    let scaleX = this.parsePercentage(this.style.scaleX, 1);
-    // @ts-ignore
-    let scaleY = this.parsePercentage(this.style.scaleY, 1);
+    let anchorX = this.parsePercentage(0.5, this.style.anchorX);
+
+    let anchorY = this.parsePercentage(0.5, this.style.anchorY);
+
+    let scaleX = this.parsePercentage(1, this.style.scaleX);
+
+    let scaleY = this.parsePercentage(1, this.style.scaleY);
 
     const anchorsDirty = anchorX !== this.anchorX || anchorY !== this.anchorY || scaleX !== this.scaleX || scaleY !== this.scaleY;
 
     if (anchorsDirty) {
       this.anchorX = anchorX;
       this.anchorY = anchorY;
-      // @ts-ignore
+      
       this.displayObject.scale.x = this.scaleX = scaleX;
-      // @ts-ignore
+      
       this.displayObject.scale.y = this.scaleY = scaleY;
     }
 
@@ -152,13 +146,17 @@ export default class BaseElement {
     const newLayout = this.layoutNode.getComputedLayout();
     const cached = this.cachedLayout;
 
-    const layoutDirty = this.layoutDirty || newLayout.left !== cached.left || newLayout.top !== cached.top ||
-      newLayout.width !== cached.width || newLayout.height !== cached.height;
+    const layoutDirty = (
+      this.layoutDirty ||
+      newLayout.left !== cached.left ||
+      newLayout.top !== cached.top ||
+      newLayout.width !== cached.width ||
+      newLayout.height !== cached.height
+    );
 
     if (layoutDirty) {
-      // @ts-ignore
+      
       cached.x = newLayout.left;
-      // @ts-ignore
       cached.y = newLayout.top;
       cached.width = newLayout.width;
       cached.height = newLayout.height;
@@ -169,16 +167,16 @@ export default class BaseElement {
       const offsetX = this.anchorX * cached.width;
       const offsetY = this.anchorY * cached.height;
 
-      // @ts-ignore
+      
       this.displayObject.position.x = cached.x + offsetX;
-      // @ts-ignore
+      
       this.displayObject.position.y = cached.y + offsetY;
 
-      // @ts-ignore
+      
       this.onLayout(cached.x, cached.y, cached.width, cached.height);
 
       if (this.onLayoutCallback) {
-        // @ts-ignore
+        
         this.onLayoutCallback(cached.x, cached.y, cached.width, cached.height);
       }
 
@@ -186,30 +184,17 @@ export default class BaseElement {
     }
   }
 
-  onLayout (x, y, width, height) {
-  }
-
-  parsePercentage (value, defaultValue) {
-    if (value === undefined) {
-      return defaultValue;
-    }
-
-    if (typeof value === 'string') {
-      return value.endsWith('%') ? Number(value.substring(1, 0)) * 0.01 : Number(value);
-    }
-
-    return value;
-  }
+  abstract onLayout (x: number, y: number, width: number, height: number);
 
   destroy () {
-    // @ts-ignore
     this.displayObject.destroy();
     this.displayObject = null;
+    
     this.layoutNode.free();
     this.layoutNode = null;
   }
 
-  createDisplayObject (): PIXI.Container {
+  createDisplayObject (): T{
     invariant(false, 'Cannot instantiate base class');
 
     return void 0;
@@ -232,21 +217,33 @@ export default class BaseElement {
   }
 
   static get defaultProps () {
-    // @ts-ignore
+    
     if (!this._defaultProps) {
 
       const props = this.listDefaultProps();
       const list = Object.keys(props);
       const count = list.length;
 
-      // @ts-ignore
+      
       this._defaultProps = { props, list, count };
-      // @ts-ignore
+      
       this._defaultProps.count = this._defaultProps.list.length;
     }
 
-    // @ts-ignore
+    
     return this._defaultProps;
+  }
+
+  private parsePercentage (defaultValue: number, value?: string | number): number {
+    if (value === undefined) {
+      return defaultValue;
+    }
+
+    if (typeof value === 'string') {
+      return value.endsWith('%') ? Number(value.substring(1, 0)) * 0.01 : Number(value);
+    }
+
+    return value;
   }
 
   static listDefaultProps () {

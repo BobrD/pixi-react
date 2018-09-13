@@ -406,21 +406,22 @@ function isShallowEqual (props1, props2) {
   return true;
 }
 
-export default function applyLayoutProperties (node, oldProps, newProps) {
-
+export default function applyLayoutProperties(node, oldProps, newProps) {
   if (isShallowEqual(oldProps, newProps)) {
     return false;
   }
 
   for (let propName in oldProps) {
     const propSetter = setterMap[propName];
-    if (propSetter && !newProps.hasOwnProperty(propName)) {
+
+    if (propSetter && ! newProps.hasOwnProperty(propName)) {
       propSetter(node, defaultValues[propName]);
     }
   }
 
   for (let propName in newProps) {
     const propSetter = setterMap[propName];
+
     if (propSetter) {
       propSetter(node, newProps[propName]);
     }

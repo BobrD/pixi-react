@@ -61,5 +61,4 @@ export default class Stage extends React.Component {
     // @ts-ignore
     return <canvas ref={ ref => this._canvas = ref } />;
   }
-
 };

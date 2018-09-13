@@ -1,4 +1,3 @@
-// @ts-ignore
 import * as PIXI from 'pixi.js';
 import Container from './Container';
 import * as _ from 'lodash';

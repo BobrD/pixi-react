@@ -10,11 +10,13 @@ import GraphicsElement from './elements/Graphics';
 import RectangleElement from './elements/Rectangle';
 import TextElement from './elements/Text';
 import Stage from './Stage';
+import BaseElement from "./elements/BaseElement";
 
 const UPDATE_SIGNAL = {};
 // @ts-ignore
 const performance = window.performance || window.msPerformance || window.webkitPerformance;
-const _registeredElements = {};
+
+const _registeredElements: {[name: string]: new() => BaseElement} = {};
 
 function appendChild (parent, child) {
   if (parent.addChild) {
@@ -35,67 +37,72 @@ function removeChild (parent, child) {
   child.destroy()
 }
 
-function insertBefore (parent, child, beforeChild) {
+function insertBefore (parent: BaseElement, child: BaseElement, beforeChild: BaseElement) {
   invariant(child !== beforeChild, 'PixiFiber cannot insert node before itself');
 
   const childExists = parent.children.indexOf(child) !== -1;
+
   const index = parent.getChildIndex(beforeChild);
 
   childExists ? parent.setChildIndex(child, index) : parent.addChildAt(child, index)
-
 }
 
-function commitUpdate (instance, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
+function commitUpdate (instance: BaseElement, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
   instance.applyProps(oldProps, newProps);
 }
 
 const ReactPixiLayout = ReactFiberReconciler({
 
-  getRootHostContext: function (rootContainerInstance) {
-    return {root: rootContainerInstance};
+  getRootHostContext (rootContainerInstance) {
+    return rootContainerInstance;
   },
 
-  getChildHostContext: function () {
+  getChildHostContext() {
     return {};
   },
 
-  getPublicInstance: function (inst) {
+  getPublicInstance(inst) {
     return inst;
   },
 
-  prepareForCommit: function () {
+  prepareForCommit() {
     // Noop
   },
 
-  resetAfterCommit: function () {
+  resetAfterCommit() {
     // Noop
   },
 
-  createInstance: function (type, props, internalInstanceHandle, hostContext) {
+  createInstance: function (type: string, props: {}, internalInstanceHandle, hostContext: BaseElement) {
     const ctor = _registeredElements[type];
+
     invariant(ctor, 'ReactPixiLayout does not support the type: `%s`.', type);
+
     const instance = new ctor();
-    instance.root = hostContext.root;
+
+    instance.root = hostContext;
+
     instance.applyProps({}, props);
+
     return instance;
   },
 
   appendInitialChild: appendChild,
 
 
-  finalizeInitialChildren: function (pixiElement, type, props, rootContainerInstance) {
+  finalizeInitialChildren(pixiElement, type, props, rootContainerInstance) {
     return false;
   },
 
-  prepareUpdate: function (pixiElement, type, oldProps, newProps, rootContainerInstance, hostContext) {
+  prepareUpdate(pixiElement, type, oldProps, newProps, rootContainerInstance, hostContext) {
     return UPDATE_SIGNAL;
   },
 
-  shouldSetTextContent: function (type, props) {
+  shouldSetTextContent(type, props) {
     return false;
   },
 
-  shouldDeprioritizeSubtree: function (type, props) {
+  shouldDeprioritizeSubtree(_, props) {
     const isAlphaVisible = typeof props.alpha === 'undefined' || props.alpha > 0;
     const isRenderable = typeof props.renderable === 'undefined' || props.renderable === true;
     const isVisible = typeof props.visible === 'undefined' || props.visible === true;
@@ -103,11 +110,11 @@ const ReactPixiLayout = ReactFiberReconciler({
     return !(isAlphaVisible && isRenderable && isVisible)
   },
 
-  createTextInstance: function (text, rootContainerInstance, internalInstanceHandle) {
+  createTextInstance(text, rootContainerInstance, internalInstanceHandle) {
     invariant(false, 'ReactPixiLayout does not support text instances. Use Text component instead.');
   },
 
-  now: function () {
+  now() {
     return performance.now();
   },
 
@@ -139,16 +146,16 @@ const ReactPixiLayout = ReactFiberReconciler({
     // noop
   },
 
-  commitTextUpdate: function (textInstance, oldText, newText) {
+  commitTextUpdate(textInstance, oldText, newText) {
     // Noop
   },
 
-  resetTextContent: function (pixiElement) {
+  resetTextContent(pixiElement) {
     // Noop
   },
 });
 
-export function registerElement (name, element) {
+function registerElement (name, element) {
   _registeredElements[name] = element;
   return name;
 }
