@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import * as React from 'react';
 import * as Yoga from 'yoga-layout';
 import invariant from 'fbjs/lib/invariant';
 import * as _ from 'lodash';
@@ -23,7 +22,7 @@ const childNotSupported = () => invariant(false, 'Element does not support child
 const noStyle = {};
 
 // @ts-ignore
-export default class BaseElement<T> implements React.ComponentClass<T> {
+export default class BaseElement {
 
   _layoutDirty = true;
   displayObject = this.createDisplayObject();
@@ -37,22 +36,6 @@ export default class BaseElement<T> implements React.ComponentClass<T> {
   scaleX = 1;
   scaleY = 1;
   root = null;
-
-  // render(): React.ReactNode {
-  //   return void 0;
-  // }
-  //
-  // setState() {}
-  //
-  // forceUpdate() {}
-  //
-  // props;
-  //
-  // state;
-  //
-  // context;
-  //
-  // refs;
 
   hasChild (child) {
     childNotSupported();

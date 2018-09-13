@@ -52,7 +52,7 @@ function commitUpdate (instance, updatePayload, type, oldProps, newProps, intern
 const ReactPixiLayout = ReactFiberReconciler({
 
   getRootHostContext: function (rootContainerInstance) {
-    return rootContainerInstance;
+    return {root: rootContainerInstance};
   },
 
   getChildHostContext: function () {

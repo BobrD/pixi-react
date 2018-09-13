@@ -8,7 +8,7 @@ export interface IProps {
   style: any
 }
 
-export default class Rectangle extends Graphics<IProps> {
+export default class Rectangle extends Graphics {
 
   _color = DEFAULT_COLOR;
 

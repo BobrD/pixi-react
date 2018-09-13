@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import * as Yoga from 'yoga-layout';
 import BaseElement from './BaseElement';
 
-export default class Sprite<T> extends BaseElement<T> {
+export default class Sprite extends BaseElement {
 
   sizeData = { width: 0, height: 0 };
 

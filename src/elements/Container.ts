@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BaseElement from './BaseElement';
 
-export default class Container<T> extends BaseElement<T> {
+export default class Container extends BaseElement {
 
   children = [];
 

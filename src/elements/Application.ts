@@ -24,7 +24,7 @@ const optionKeys = [
   'width'
 ];
 
-export default class Application<T> extends Container<T> {
+export default class Application extends Container {
 
   constructor (props) {
     super();

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BaseElement from './BaseElement';
 
-export default class Text<T> extends BaseElement<T> {
+export default class Text extends BaseElement {
 
   constructor () {
     super();

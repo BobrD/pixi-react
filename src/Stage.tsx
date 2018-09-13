@@ -35,13 +35,6 @@ export default class Stage extends React.Component {
     // @ts-ignore
     this._applicationContainer = ReactPixiLayout.createContainer(this._applicationElement);
 
-    ReactPixiLayout.injectIntoDevTools({
-      findFiberByHostInstance: ReactPixiLayout.findFiberByHostInstance,
-      bundleType: 1,
-      version: '0.0.1',
-      rendererPackageName: 'react-pixi-layout'
-    });
-
     // @ts-ignore
     ReactPixiLayout.updateContainer(this.props.children, this._applicationContainer, this);
   }
