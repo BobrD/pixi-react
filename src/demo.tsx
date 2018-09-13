@@ -49,17 +49,17 @@ class App extends React.Component {
 
         <Text text="An Absolutely Positioned Header" style={{ fill: 'blue', fontSize: 32 }} />
 
-        {/*<Container style={ styles.container }>*/}
+        <Container style={ styles.container }>
 
-          {/*<Animated.Rectangle*/}
-            {/*style={{ color: this.color, width: this.width, height: '50%', alignItems: 'center', justifyContent: 'center' }}*/}
-            {/*onClick={ this.onClick }*/}
-          {/*>*/}
-            {/*<Text text="Click Me" style={{ fill: 'white', fontSize: 30 }} />*/}
-            {/*<Animated.Sprite texture="https://i.imgur.com/6xwgjO2.png" style={{ height: '50%', alpha: this.animatedValue }} />*/}
-          {/*</Animated.Rectangle>*/}
-          {/*<Rectangle style={ styles.flexRight } />*/}
-        {/*</Container>*/}
+          <Animated.Rectangle
+            style={{ color: this.color, width: this.width, height: '50%', alignItems: 'center', justifyContent: 'center' }}
+            onClick={ this.onClick }
+          >
+            <Text text="Click Me" style={{ fill: 'white', fontSize: 30 }} />
+            <Animated.Sprite texture="https://i.imgur.com/6xwgjO2.png" style={{ height: '50%', alpha: this.animatedValue }} />
+          </Animated.Rectangle>
+          <Rectangle style={ styles.flexRight } />
+        </Container>
       </Stage>
     );
   }

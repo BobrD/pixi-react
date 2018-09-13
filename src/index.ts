@@ -1,7 +1,7 @@
 import * as Animated from 'animated';
-import Easing from 'animated/lib/Easing';
+import * as Easing from 'animated/lib/Easing';
 import * as ReactFiberReconciler from 'react-reconciler';
-import invariant from 'fbjs/lib/invariant';
+import * as invariant from 'fbjs/lib/invariant';
 import ContainerElement from './elements/Container';
 import SpriteElement from './elements/Sprite';
 import NineSliceSpriteElement from './elements/NineSliceSprite';
@@ -16,25 +16,33 @@ const UPDATE_SIGNAL = {};
 const performance = window.performance || window.msPerformance || window.webkitPerformance;
 const _registeredElements = {};
 
-function appendChild (parentInstance, child) {
-  parentInstance.addChild(child);
-}
+function appendChild (parent, child) {
+  if (parent.addChild) {
+    parent.addChild(child);
 
-function removeChild (parentInstance, child) {
-  parentInstance.removeChild(child);
-}
-
-function insertBefore (parentInstance, child, beforeChild) {
-  invariant(child !== beforeChild, 'ReactPixiLayout cannot insert node before itself');
-
-  const childExists = parentInstance.hasChild(child);
-  const index = parentInstance.getChildIndex(beforeChild);
-
-  if (childExists) {
-    parentInstance.setChildIndex(child, index);
-  } else {
-    parentInstance.addChildAt(child, index);
+    if (typeof child.didMount === 'function') {
+      child.didMount.call(child, child, parent)
+    }
   }
+}
+
+function removeChild (parent, child) {
+  if (typeof child.willUnmount === 'function') {
+    child.willUnmount.call(child, child, parent)
+  }
+
+  parent.removeChild(child);
+  child.destroy()
+}
+
+function insertBefore (parent, child, beforeChild) {
+  invariant(child !== beforeChild, 'PixiFiber cannot insert node before itself');
+
+  const childExists = parent.children.indexOf(child) !== -1;
+  const index = parent.getChildIndex(beforeChild);
+
+  childExists ? parent.setChildIndex(child, index) : parent.addChildAt(child, index)
+
 }
 
 function commitUpdate (instance, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
@@ -43,7 +51,25 @@ function commitUpdate (instance, updatePayload, type, oldProps, newProps, intern
 
 const ReactPixiLayout = ReactFiberReconciler({
 
-  appendInitialChild: appendChild,
+  getRootHostContext: function (rootContainerInstance) {
+    return rootContainerInstance;
+  },
+
+  getChildHostContext: function () {
+    return {};
+  },
+
+  getPublicInstance: function (inst) {
+    return inst;
+  },
+
+  prepareForCommit: function () {
+    // Noop
+  },
+
+  resetAfterCommit: function () {
+    // Noop
+  },
 
   createInstance: function (type, props, internalInstanceHandle, hostContext) {
     const ctor = _registeredElements[type];
@@ -54,83 +80,72 @@ const ReactPixiLayout = ReactFiberReconciler({
     return instance;
   },
 
-  createTextInstance: function (text, rootContainerInstance, internalInstanceHandle) {
-    invariant(false, 'ReactPixiLayout does not support text instances. Use Text component instead.');
-  },
+  appendInitialChild: appendChild,
+
 
   finalizeInitialChildren: function (pixiElement, type, props, rootContainerInstance) {
     return false;
-  },
-
-  getChildHostContext: function (parentHostContext, type) {
-    return parentHostContext;
-  },
-
-  getRootHostContext: function (rootContainerInstance) {
-    return { root: rootContainerInstance };
-  },
-
-  getPublicInstance: function (inst) {
-    return inst;
-  },
-
-  now: function () {
-    return performance.now();
-  },
-
-  prepareForCommit: function () {
-    // Noop
   },
 
   prepareUpdate: function (pixiElement, type, oldProps, newProps, rootContainerInstance, hostContext) {
     return UPDATE_SIGNAL;
   },
 
-  resetAfterCommit: function () {
+  shouldSetTextContent: function (type, props) {
+    return false;
+  },
+
+  shouldDeprioritizeSubtree: function (type, props) {
+    const isAlphaVisible = typeof props.alpha === 'undefined' || props.alpha > 0;
+    const isRenderable = typeof props.renderable === 'undefined' || props.renderable === true;
+    const isVisible = typeof props.visible === 'undefined' || props.visible === true;
+
+    return !(isAlphaVisible && isRenderable && isVisible)
+  },
+
+  createTextInstance: function (text, rootContainerInstance, internalInstanceHandle) {
+    invariant(false, 'ReactPixiLayout does not support text instances. Use Text component instead.');
+  },
+
+  now: function () {
+    return performance.now();
+  },
+
+  isPrimaryRenderer: false,
+
+  supportsMutation: true,
+
+  /**
+   * -------------------------------------------
+   * Mutation
+   * -------------------------------------------
+   */
+
+  appendChild,
+
+  appendChildToContainer: appendChild,
+
+  removeChild,
+
+  removeChildFromContainer: removeChild,
+
+  insertBefore,
+
+  insertInContainerBefore: insertBefore,
+
+  commitUpdate,
+
+  commitMount(instance, updatePayload, type, oldProps, newProps) {
+    // noop
+  },
+
+  commitTextUpdate: function (textInstance, oldText, newText) {
     // Noop
   },
 
   resetTextContent: function (pixiElement) {
     // Noop
   },
-
-  shouldDeprioritizeSubtree: function (type, props) {
-    const isAlphaVisible = props.alpha === undefined || props.alpha > 0;
-    const isRenderable = props.renderable === undefined || props.renderable === true;
-    const isVisible = props.visible === undefined || props.visible === true;
-
-    return !(isAlphaVisible && isRenderable && isVisible);
-  },
-
-  shouldSetTextContent: function (type, props) {
-    return false;
-  },
-
-  useSyncScheduling: true,
-
-  mutation: {
-
-    appendChild: appendChild,
-    appendChildToContainer: appendChild,
-
-    insertBefore: insertBefore,
-    insertInContainerBefore: insertBefore,
-
-    removeChild: removeChild,
-    removeChildFromContainer: removeChild,
-
-    commitTextUpdate: function (textInstance, oldText, newText) {
-      // Noop
-    },
-
-    commitMount: function (instance, type, newProps) {
-      // Noop
-    },
-
-    commitUpdate: commitUpdate
-  
-  }
-
 });
 
 export function registerElement (name, element) {
