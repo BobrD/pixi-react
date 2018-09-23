@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import { ReactPixiLayout } from './index';
+import { ReactPixiLayout } from './reconciler/index';
 import Application from './elements/Application';
 
 export default class Stage extends React.Component {

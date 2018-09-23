@@ -1,6 +1,6 @@
-import AbstractContainer from './AbstractContainer';
+import Container from './Container';
 
-export class Root extends AbstractContainer {
+export class Root extends Container {
 
   constructor() {
     super();

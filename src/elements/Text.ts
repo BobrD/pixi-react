@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import AbstractContainer from "./AbstractContainer";
+import Container from "./Container";
 
-export default class Text extends AbstractContainer<PIXI.Text> {
+export default class Text extends Container<PIXI.Text> {
 
   sizeData = { width: 0, height: 0 };
 

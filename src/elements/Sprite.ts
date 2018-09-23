@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
 import * as Yoga from 'yoga-layout';
-import AbstractContainer from "./AbstractContainer";
+import Container from "./Container";
 
-export default class Sprite extends AbstractContainer<PIXI.Sprite> {
+export default class Sprite extends Container<PIXI.Sprite> {
 
   sizeData = { width: 0, height: 0 };
 

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BaseElement from './BaseElement';
 
-export default class AbstractContainer<T extends PIXI.Container = PIXI.Container> extends BaseElement<T> {
+export default class Container<T extends PIXI.Container = PIXI.Container> extends BaseElement<T> {
 
   addChild (child) {
     this.layoutNode.insertChild(child.layoutNode, this.layoutNode.getChildCount());

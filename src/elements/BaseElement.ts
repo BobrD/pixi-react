@@ -22,7 +22,7 @@ const noStyle = {};
 
 export default abstract class BaseElement<T extends PIXI.DisplayObject = PIXI.DisplayObject> {
 
-  _layoutDirty = true;
+  private _layoutDirty = true;
 
   children = [];
 
@@ -194,7 +194,7 @@ export default abstract class BaseElement<T extends PIXI.DisplayObject = PIXI.Di
     this.layoutNode = null;
   }
 
-  createDisplayObject (): T{
+  createDisplayObject (): T {
     invariant(false, 'Cannot instantiate base class');
 
     return void 0;
@@ -217,20 +217,20 @@ export default abstract class BaseElement<T extends PIXI.DisplayObject = PIXI.Di
   }
 
   static get defaultProps () {
-    
+
     if (!this._defaultProps) {
 
       const props = this.listDefaultProps();
       const list = Object.keys(props);
       const count = list.length;
 
-      
+
       this._defaultProps = { props, list, count };
-      
+
       this._defaultProps.count = this._defaultProps.list.length;
     }
 
-    
+
     return this._defaultProps;
   }
 

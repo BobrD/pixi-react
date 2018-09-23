@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import AbstractContainer from './AbstractContainer';
+import Container from './Container';
 
-export default class Sprite<T extends PIXI.mesh.NineSlicePlane = PIXI.mesh.NineSlicePlane> extends AbstractContainer<T> {
+export default class Sprite<T extends PIXI.mesh.NineSlicePlane = PIXI.mesh.NineSlicePlane> extends Container<T> {
   createDisplayObject () {
     return new PIXI.mesh.NineSlicePlane(PIXI.Texture.EMPTY) as T;
   }

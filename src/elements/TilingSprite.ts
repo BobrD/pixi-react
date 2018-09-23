@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import AbstractContainer from './AbstractContainer';
+import Container from './Container';
 
-export default class TilingSprite<T extends PIXI.extras.TilingSprite = PIXI.extras.TilingSprite> extends AbstractContainer<T> {
+export default class TilingSprite<T extends PIXI.extras.TilingSprite = PIXI.extras.TilingSprite> extends Container<T> {
 
   createDisplayObject () {
     return new PIXI.extras.TilingSprite(PIXI.Texture.EMPTY) as T;
